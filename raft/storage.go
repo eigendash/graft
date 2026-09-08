@@ -89,9 +89,18 @@ type Storage interface {
 	SaveHardState(HardState) error
 	// SaveLog applies a mutation atomically.
 	SaveLog(LogMutation) error
-	// SaveSnapshot stores a state machine image and may discard every entry it
-	// subsumes.
+	// SaveSnapshot stores an image this node produced itself by compacting its
+	// log. Entries at or below the image's index are subsumed and may be
+	// discarded; entries above it are still part of this node's log and must
+	// be kept.
 	SaveSnapshot(Snapshot) error
+	// InstallSnapshot stores an image received from the leader. It is a
+	// different operation from SaveSnapshot because it invalidates the entire
+	// local log: the leader sent this image precisely because the suffix this
+	// node holds is not the right one. Treating the two as one operation is
+	// what lets a stale suffix survive a restart and be replayed against a
+	// snapshot that already supersedes it.
+	InstallSnapshot(Snapshot) error
 }
 
 // ErrCorruptState is returned by a Storage implementation that finds persisted
@@ -180,6 +189,17 @@ func (m *MemoryStorage) SaveSnapshot(s Snapshot) error {
 		}
 	}
 	m.entries = kept
+	if m.hardState.Commit < s.Index {
+		m.hardState.Commit = s.Index
+	}
+	return nil
+}
+
+// InstallSnapshot implements Storage.
+func (m *MemoryStorage) InstallSnapshot(s Snapshot) error {
+	m.Saves++
+	m.snapshot = s.Clone()
+	m.entries = nil
 	if m.hardState.Commit < s.Index {
 		m.hardState.Commit = s.Index
 	}

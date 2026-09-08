@@ -19,6 +19,7 @@ type Server struct {
 	// taken at an applied index.
 	snapshotThreshold uint64
 	snapshots         int
+	installs          int
 }
 
 // NewServer wraps node. A snapshotThreshold of zero disables compaction.
@@ -90,3 +91,59 @@ func (s *Server) Poll() ([]raft.Message, error) {
 	}
 	return r.Messages, nil
 }
+
+// PollAll is Poll with the details of the hand-off preserved. The simulator
+// needs to see exactly which entries and which snapshot image a node applied,
+// because those are the values the safety invariants are stated over.
+func (s *Server) PollAll() (PollResult, error) {
+	r := s.node.Ready()
+	var out PollResult
+	if r.Snapshot != nil {
+		if err := s.sm.Restore(r.Snapshot.Data); err != nil {
+			return out, fmt.Errorf("kv: installing snapshot at %d: %w", r.Snapshot.Index, err)
+		}
+		out.Snapshot = r.Snapshot
+		s.installs++
+	}
+	for _, e := range r.CommittedEntries {
+		if e.Type != raft.EntryNormal || len(e.Data) == 0 {
+			continue
+		}
+		cmd, err := DecodeCommand(e.Data)
+		if err != nil {
+			return out, fmt.Errorf("kv: entry %d/%d: %w", e.Term, e.Index, err)
+		}
+		s.sm.Apply(cmd)
+	}
+	out.Committed = r.CommittedEntries
+	s.node.Advance()
+
+	if s.snapshotThreshold > 0 {
+		applied := s.node.Applied()
+		if snap := s.node.Snapshot(); snap == nil || applied-snap.Index >= raft.Index(s.snapshotThreshold) {
+			created, err := s.node.CreateSnapshot(s.sm.Snapshot())
+			if err != nil {
+				return out, fmt.Errorf("kv: compacting at %d: %w", applied, err)
+			}
+			if created != nil {
+				out.Compacted = true
+				s.snapshots++
+			}
+		}
+	}
+	out.Messages = r.Messages
+	return out, nil
+}
+
+// PollResult is what one PollAll produced.
+type PollResult struct {
+	Messages  []raft.Message
+	Snapshot  *raft.Snapshot
+	Committed []raft.Entry
+	Compacted bool
+}
+
+// InstalledSnapshots reports how many InstallSnapshot images this server has
+// installed. A test can use it to prove the snapshot path ran rather than
+// assuming it.
+func (s *Server) InstalledSnapshots() int { return s.installs }

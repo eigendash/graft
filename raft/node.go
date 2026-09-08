@@ -251,6 +251,26 @@ func (n *Node) TermAt(i Index) (Term, error) { return n.log.term(i) }
 // above the snapshot.
 func (n *Node) Entries() []Entry { return n.log.entriesFrom() }
 
+// EntriesFrom returns the in-memory entries with index >= from without
+// copying. The result aliases internal storage, so callers must treat it as
+// read-only and must not retain it across a Step, Tick or Ready call. It exists
+// so that a simulator can scan a growing log incrementally instead of copying
+// it on every tick.
+func (n *Node) EntriesFrom(from Index) []Entry {
+	lo, hi := n.log.firstIndex(), n.log.lastIndex()+1
+	if from > lo {
+		lo = from
+	}
+	if lo >= hi {
+		return nil
+	}
+	ents, err := n.log.slice(lo, hi)
+	if err != nil {
+		return nil
+	}
+	return ents
+}
+
 // FirstIndex is the lowest index the node can still serve.
 func (n *Node) FirstIndex() Index { return n.log.firstIndex() }
 
@@ -659,6 +679,7 @@ func (n *Node) appendEntriesToLog(truncateFrom Index, ents []Entry) {
 	if len(ents) == 0 && truncateFrom == 0 {
 		return
 	}
+	n.checkTermOrder(truncateFrom, ents)
 	if err := n.cfg.Storage.SaveLog(LogMutation{TruncateFrom: truncateFrom, Entries: ents}); err != nil {
 		n.bug("persisting log: %v", err)
 		return
@@ -674,6 +695,36 @@ func (n *Node) appendEntriesToLog(truncateFrom Index, ents []Entry) {
 			return
 		}
 		n.applyConfChange(cc)
+	}
+}
+
+// checkTermOrder asserts that a log's terms never decrease.
+//
+// It is the cheapest possible statement of "these entries really do extend
+// that prefix", and it catches the class of bug where a stale suffix survives
+// next to a newer one: terms are assigned in increasing order, so a suffix
+// whose term is older than its predecessor cannot belong to the same history.
+func (n *Node) checkTermOrder(truncateFrom Index, ents []Entry) {
+	if len(ents) == 0 {
+		return
+	}
+	prev := n.log.lastIndex()
+	if truncateFrom > 0 {
+		prev = truncateFrom - 1
+	}
+	var prevTerm Term
+	if prev > 0 {
+		if t, err := n.log.term(prev); err == nil {
+			prevTerm = t
+		}
+	}
+	for _, e := range ents {
+		if e.Term < prevTerm {
+			n.bug("log terms would decrease: entry %d has term %d after term %d at index %d",
+				e.Index, e.Term, prevTerm, prev)
+			return
+		}
+		prevTerm = e.Term
 	}
 }
 
@@ -872,6 +923,8 @@ func (n *Node) sendAppend(to NodeID, force bool) {
 		pr.PendingSnapshot = n.snapshot.Index
 		pr.PausedUntil = n.now + int64(n.cfg.ElectionTick)
 		pr.Inflights.reset()
+		// Snapshot images are replaced wholesale rather than mutated, so the
+		// message may share the node's current image safely.
 		n.send(Message{Type: MsgSnap, To: to, Term: n.term, Snapshot: n.snapshot})
 		return
 	}
@@ -891,6 +944,14 @@ func (n *Node) sendAppend(to NodeID, force bool) {
 		n.bug("slice(%d,%d): %v", pr.Next, hi, err)
 		return
 	}
+	// Copy. The slice aliases the log's backing array, and this message will
+	// sit on the wire while the log is mutated underneath it: a node that
+	// loses leadership truncates its log and appends replacements into exactly
+	// that memory. A real transport serialises the message and is immune; here
+	// the copy stands in for that serialisation, and without it an in-flight
+	// AppendEntries can end up carrying a mixture of a newer prefix and a
+	// stale suffix, which is a batch whose terms decrease.
+	ents = append([]Entry(nil), ents...)
 	if pr.State == ProgressProbe {
 		pr.PausedUntil = n.now + int64(n.cfg.ElectionTick)
 	} else {
@@ -926,7 +987,7 @@ func (n *Node) handleSnapshot(m Message) {
 		n.send(Message{Type: MsgAppResp, To: m.From, Term: n.term, Index: n.log.lastIndex()})
 		return
 	}
-	if err := n.cfg.Storage.SaveSnapshot(*snap); err != nil {
+	if err := n.cfg.Storage.InstallSnapshot(*snap); err != nil {
 		n.bug("persisting installed snapshot: %v", err)
 		return
 	}
