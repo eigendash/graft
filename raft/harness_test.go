@@ -14,7 +14,7 @@ import (
 // is only meaningful if it can observe the exact instant at which an
 // old-term entry is on a majority but must not be committed.
 type cluster struct {
-	t      *testing.T
+	t      testing.TB
 	ids    []NodeID
 	nodes  map[NodeID]*Node
 	stores map[NodeID]*MemoryStorage
@@ -50,7 +50,7 @@ type cluster struct {
 	lastTerm   map[NodeID]Term
 }
 
-func newCluster(t *testing.T, n int, mutate func(*Config)) *cluster {
+func newCluster(t testing.TB, n int, mutate func(*Config)) *cluster {
 	t.Helper()
 	ids := make([]NodeID, n)
 	for i := range ids {

@@ -15,7 +15,6 @@
 package sim
 
 import (
-	"container/heap"
 	"fmt"
 	"math/rand"
 	"sort"
@@ -207,20 +206,83 @@ type envelope struct {
 	msg     raft.Message
 }
 
-// wire is a min-heap ordered by (deliver, seq). The sequence number is unique,
-// so the order is total and the simulation has no ties to break.
+// wire is a binary min-heap ordered by (deliver, seq). The sequence number is
+// unique, so the ordering is total and the simulation has no ties to break.
+//
+// It is hand-written rather than built on the standard library's container/heap
+// because that interface boxes every element into an any, which costs one
+// allocation per message on the hottest path in the simulator.
 type wire []envelope
 
-func (w wire) Len() int { return len(w) }
-func (w wire) Less(i, j int) bool {
-	if w[i].deliver != w[j].deliver {
-		return w[i].deliver < w[j].deliver
+// before reports whether e must be delivered earlier than o.
+func (e envelope) before(o envelope) bool {
+	if e.deliver != o.deliver {
+		return e.deliver < o.deliver
 	}
-	return w[i].seq < w[j].seq
+	return e.seq < o.seq
 }
-func (w wire) Swap(i, j int) { w[i], w[j] = w[j], w[i] }
-func (w *wire) Push(x any)   { *w = append(*w, x.(envelope)) }
-func (w *wire) Pop() any     { old := *w; n := len(old); e := old[n-1]; *w = old[:n-1]; return e }
+
+func (w *wire) push(e envelope) {
+	*w = append(*w, e)
+	h := *w
+	i := len(h) - 1
+	for i > 0 {
+		parent := (i - 1) / 2
+		if !h[i].before(h[parent]) {
+			return
+		}
+		h[i], h[parent] = h[parent], h[i]
+		i = parent
+	}
+}
+
+func (w *wire) pop() envelope {
+	h := *w
+	top := h[0]
+	n := len(h) - 1
+	h[0] = h[n]
+	h = h[:n]
+	*w = h
+	i := 0
+	for {
+		l, r := 2*i+1, 2*i+2
+		small := i
+		if l < n && h[l].before(h[small]) {
+			small = l
+		}
+		if r < n && h[r].before(h[small]) {
+			small = r
+		}
+		if small == i {
+			return top
+		}
+		h[i], h[small] = h[small], h[i]
+		i = small
+	}
+}
+
+// init restores the heap property after the backing slice has been rebuilt by
+// hand, which is what dropping queued messages does.
+func (w *wire) init() {
+	h := *w
+	for i := len(h)/2 - 1; i >= 0; i-- {
+		for j := i; ; {
+			l, r := 2*j+1, 2*j+2
+			small := j
+			if l < len(h) && h[l].before(h[small]) {
+				small = l
+			}
+			if r < len(h) && h[r].before(h[small]) {
+				small = r
+			}
+			if small == j {
+				break
+			}
+			h[j], h[small] = h[small], h[j]
+			j = small
+		}
+	}
+}
 
 // nodeState is one simulated process: durable storage that survives a crash,
 // and the volatile parts that do not.
@@ -485,7 +547,7 @@ func (s *Sim) dropQueuedTo(id raft.NodeID) {
 		kept = append(kept, e)
 	}
 	s.wire = kept
-	heap.Init(&s.wire)
+	s.wire.init()
 }
 
 // Partition installs a network split. Nodes named in a group can talk only to
@@ -644,7 +706,7 @@ func (s *Sim) deliverDue() {
 		if e.deliver > s.tick {
 			return
 		}
-		heap.Pop(&s.wire)
+		e = s.wire.pop()
 		n := s.byID[e.to]
 		if n == nil || n.down {
 			s.stats.MessagesToDead++
@@ -708,7 +770,7 @@ func (s *Sim) route(m raft.Message) {
 		}
 		s.seq++
 		s.stats.MessagesSent++
-		heap.Push(&s.wire, envelope{
+		s.wire.push(envelope{
 			deliver: s.tick + int64(delay),
 			seq:     s.seq,
 			from:    m.From,
@@ -719,6 +781,9 @@ func (s *Sim) route(m raft.Message) {
 }
 
 func (s *Sim) injectFaults() {
+	if s.cfg.CrashRate == 0 && s.cfg.PartitionRate == 0 && s.cfg.HealRate == 0 {
+		return
+	}
 	if s.cfg.CrashRate > 0 {
 		for _, n := range s.nodes {
 			if n.down {

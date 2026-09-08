@@ -326,14 +326,80 @@ func MeasureElections(nodes, samples int, cfg Config) ElectionStats {
 
 // ThroughputResult measures a client workload against a healthy cluster.
 type ThroughputResult struct {
-	Nodes        int
-	HopLatency   int
-	Operations   int
-	VirtualTicks int64
-	Latency      Distribution
-	Stats        Stats
-	Elections    int64
-	Snapshots    int64
+	Nodes      int
+	HopLatency int
+	Operations int
+	Clients    int
+	// ElectionTicks is when the first leader appeared, or -1 if none did. It is
+	// reported but excluded from VirtualTicks.
+	ElectionTicks int64
+	VirtualTicks  int64
+	// Completed reports whether every client finished inside the budget. A
+	// throughput number from a run that did not finish is meaningless, so
+	// callers must check this.
+	Completed bool
+	Latency   Distribution
+	Stats     Stats
+	Elections int64
+	Snapshots int64
+}
+
+// OpsPerVirtualSecond is the throughput the configuration implies. One
+// simulated tick is one millisecond of configured network behaviour, so this
+// number is a property of the cluster and the fault model rather than of the
+// machine that produced it.
+func (r ThroughputResult) OpsPerVirtualSecond() float64 {
+	if r.VirtualTicks == 0 {
+		return 0
+	}
+	return float64(r.Operations) * 1000 / float64(r.VirtualTicks)
+}
+
+// MeasureKV runs a client workload against a fault-free cluster until every
+// client finishes or the tick budget runs out.
+//
+// The election that establishes the first leader is excluded from the measured
+// window. Including it would make throughput a function of how long the cluster
+// took to start rather than of how fast it serves, and the two are not
+// comparable across configurations with different hop latencies.
+func MeasureKV(cfg Config, w Workload, maxTicks int) ThroughputResult {
+	cfg.Workload = w
+	s, err := New(cfg)
+	if err != nil {
+		return ThroughputResult{Nodes: cfg.Nodes, HopLatency: cfg.Latency.Min, Clients: w.Clients}
+	}
+	started := int64(-1)
+	for i := 0; i < maxTicks; i++ {
+		if started < 0 && len(s.Leaders()) > 0 {
+			started = s.Now()
+		}
+		if started >= 0 {
+			if p := s.WorkloadProgress(); p.Completed == p.Total {
+				break
+			}
+		}
+		s.Step()
+	}
+	prog := s.WorkloadProgress()
+	var window int64
+	if started < 0 {
+		window = s.Now()
+	} else {
+		window = s.Now() - started
+	}
+	return ThroughputResult{
+		Nodes:         cfg.Nodes,
+		HopLatency:    cfg.Latency.Min,
+		Operations:    prog.Completed,
+		Clients:       w.Clients,
+		ElectionTicks: started,
+		VirtualTicks:  window,
+		Completed:     prog.Total > 0 && prog.Completed == prog.Total,
+		Latency:       Summarise(s.LatencySamples()),
+		Stats:         s.Stats(),
+		Elections:     s.Stats().Elections,
+		Snapshots:     s.Stats().SnapshotsCreated,
+	}
 }
 
 // MeasureThroughput runs one workload against a fault-free cluster and reports
