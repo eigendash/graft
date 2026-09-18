@@ -1,0 +1,53 @@
+$ go test -run XXX -bench=. -benchtime=1s -count=1 ./...
+?   	github.com/eigendash/graft/cmd/graftbench	[no test files]
+PASS
+ok  	github.com/eigendash/graft/kv	0.161s
+goos: darwin
+goarch: arm64
+pkg: github.com/eigendash/graft/lcheck
+cpu: Apple M4 Pro
+BenchmarkCheck/kv/ops=8-12   	  179671	      7153 ns/op	         8.000 search-steps
+BenchmarkCheck/kv/ops=16-12  	   72228	     17194 ns/op	        16.00 search-steps
+BenchmarkCheck/kv/ops=24-12  	   48651	     27563 ns/op	        24.00 search-steps
+BenchmarkCheck/kv/ops=32-12  	   30560	     38710 ns/op	        32.00 search-steps
+BenchmarkCheckRegister/register/ops=8-12         	  510006	      2284 ns/op
+BenchmarkCheckRegister/register/ops=16-12        	  216862	      6930 ns/op
+BenchmarkCheckRegister/register/ops=24-12        	  166104	      7204 ns/op
+PASS
+ok  	github.com/eigendash/graft/lcheck	10.137s
+goos: darwin
+goarch: arm64
+pkg: github.com/eigendash/graft/raft
+cpu: Apple M4 Pro
+BenchmarkStepAppendEntries/batch=1-12         	20445512	        64.66 ns/op	 108.26 MB/s
+BenchmarkStepAppendEntries/batch=16-12        	11683560	        99.96 ns/op	1120.42 MB/s
+BenchmarkStepAppendEntries/batch=64-12        	 5129302	       236.0 ns/op	1898.14 MB/s
+BenchmarkProposeOnLeader-12                   	  455350	      2526 ns/op
+BenchmarkTruncateAndAppend-12                 	77453084	        16.35 ns/op
+PASS
+ok  	github.com/eigendash/graft/raft	6.745s
+goos: darwin
+goarch: arm64
+pkg: github.com/eigendash/graft/sim
+cpu: Apple M4 Pro
+BenchmarkTick/nodes=3/idle-12       	 1950332	       635.9 ns/op
+BenchmarkTick/nodes=3/with-log-12   	  472893	      2332 ns/op
+BenchmarkTick/nodes=5/idle-12       	  928795	      1628 ns/op
+BenchmarkTick/nodes=5/with-log-12   	  260163	      4980 ns/op
+BenchmarkTick/nodes=7/idle-12       	  415156	      2752 ns/op
+BenchmarkTick/nodes=7/with-log-12   	  189374	      5789 ns/op
+BenchmarkKVOperation/nodes=3/hop=1ms-12         	  261210	      3874 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=3/hop=10ms-12        	  246690	      4495 ns/op	        20.00 median-latency-ms	       571.4 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=3/hop=50ms-12        	  173856	      6719 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=1ms-12         	  159836	      6614 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=10ms-12        	  139851	      7430 ns/op	        20.00 median-latency-ms	       571.4 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=50ms-12        	  108637	     10345 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=1ms-12         	  112339	     10050 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=10ms-12        	   89943	     11961 ns/op	        20.00 median-latency-ms	       571.4 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=50ms-12        	   66517	     17063 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkSafetySweep-12                         	     585	   1853323 ns/op
+BenchmarkLinearizabilityCheck/ops=8-12          	  395250	      3035 ns/op
+BenchmarkLinearizabilityCheck/ops=16-12         	  144603	      8578 ns/op
+BenchmarkLinearizabilityCheck/ops=24-12         	   71302	     16338 ns/op
+PASS
+ok  	github.com/eigendash/graft/sim	25.730s

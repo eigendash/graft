@@ -1,0 +1,183 @@
+?   	github.com/eigendash/graft/cmd/graftbench	[no test files]
+=== RUN   TestCommandEncodingRoundTrip
+--- PASS: TestCommandEncodingRoundTrip (0.00s)
+=== RUN   TestCommandDecodingRejectsMalformedInput
+--- PASS: TestCommandDecodingRejectsMalformedInput (0.00s)
+=== RUN   TestStateMachineSemantics
+--- PASS: TestStateMachineSemantics (0.00s)
+=== RUN   TestRetriesAreIdempotent
+--- PASS: TestRetriesAreIdempotent (0.00s)
+=== RUN   TestResultLookup
+--- PASS: TestResultLookup (0.00s)
+=== RUN   TestSnapshotRoundTrip
+--- PASS: TestSnapshotRoundTrip (0.00s)
+=== RUN   TestSnapshotOfEmptyState
+--- PASS: TestSnapshotOfEmptyState (0.00s)
+=== RUN   TestSnapshotDecodingRejectsTruncation
+--- PASS: TestSnapshotDecodingRejectsTruncation (0.00s)
+=== RUN   TestCloneIsIndependent
+--- PASS: TestCloneIsIndependent (0.00s)
+=== RUN   TestServerAppliesThroughTheLog
+--- PASS: TestServerAppliesThroughTheLog (0.00s)
+=== RUN   TestServerRejectsProposalOnFollower
+--- PASS: TestServerRejectsProposalOnFollower (0.00s)
+PASS
+ok  	github.com/eigendash/graft/kv	1.165s
+=== RUN   TestCheckRejectsNonLinearizableRegister
+=== RUN   TestCheckRejectsNonLinearizableRegister/read_misses_a_completed_write
+=== RUN   TestCheckRejectsNonLinearizableRegister/final_read_ignores_two_completed_writes
+=== RUN   TestCheckRejectsNonLinearizableRegister/client_cannot_read_its_own_stale_write
+=== RUN   TestCheckRejectsNonLinearizableRegister/concurrent_writes_then_a_sequential_read_of_the_initial_value
+--- PASS: TestCheckRejectsNonLinearizableRegister (0.00s)
+    --- PASS: TestCheckRejectsNonLinearizableRegister/read_misses_a_completed_write (0.00s)
+    --- PASS: TestCheckRejectsNonLinearizableRegister/final_read_ignores_two_completed_writes (0.00s)
+    --- PASS: TestCheckRejectsNonLinearizableRegister/client_cannot_read_its_own_stale_write (0.00s)
+    --- PASS: TestCheckRejectsNonLinearizableRegister/concurrent_writes_then_a_sequential_read_of_the_initial_value (0.00s)
+=== RUN   TestCheckAcceptsLinearizableRegister
+=== RUN   TestCheckAcceptsLinearizableRegister/sequential_write_then_read
+=== RUN   TestCheckAcceptsLinearizableRegister/read_overlapping_the_write_may_see_the_old_value
+=== RUN   TestCheckAcceptsLinearizableRegister/read_overlapping_the_write_may_see_the_new_value
+=== RUN   TestCheckAcceptsLinearizableRegister/two_concurrent_writes_with_a_later_read_of_the_second
+=== RUN   TestCheckAcceptsLinearizableRegister/two_concurrent_writes_with_a_later_read_of_the_first
+=== RUN   TestCheckAcceptsLinearizableRegister/a_chain_of_clients_each_observing_the_previous_write
+--- PASS: TestCheckAcceptsLinearizableRegister (0.00s)
+    --- PASS: TestCheckAcceptsLinearizableRegister/sequential_write_then_read (0.00s)
+    --- PASS: TestCheckAcceptsLinearizableRegister/read_overlapping_the_write_may_see_the_old_value (0.00s)
+    --- PASS: TestCheckAcceptsLinearizableRegister/read_overlapping_the_write_may_see_the_new_value (0.00s)
+    --- PASS: TestCheckAcceptsLinearizableRegister/two_concurrent_writes_with_a_later_read_of_the_second (0.00s)
+    --- PASS: TestCheckAcceptsLinearizableRegister/two_concurrent_writes_with_a_later_read_of_the_first (0.00s)
+    --- PASS: TestCheckAcceptsLinearizableRegister/a_chain_of_clients_each_observing_the_previous_write (0.00s)
+=== RUN   TestCheckRejectsNonLinearizableKV
+=== RUN   TestCheckRejectsNonLinearizableKV/read_after_a_completed_put_reports_the_key_as_absent
+=== RUN   TestCheckRejectsNonLinearizableKV/append_order_contradicted_by_a_later_read
+=== RUN   TestCheckRejectsNonLinearizableKV/put_then_a_later_read_of_the_previous_value
+--- PASS: TestCheckRejectsNonLinearizableKV (0.00s)
+    --- PASS: TestCheckRejectsNonLinearizableKV/read_after_a_completed_put_reports_the_key_as_absent (0.00s)
+    --- PASS: TestCheckRejectsNonLinearizableKV/append_order_contradicted_by_a_later_read (0.00s)
+    --- PASS: TestCheckRejectsNonLinearizableKV/put_then_a_later_read_of_the_previous_value (0.00s)
+=== RUN   TestCheckAcceptsLinearizableKV
+--- PASS: TestCheckAcceptsLinearizableKV (0.00s)
+=== RUN   TestCheckWitnessIsAValidLinearization
+--- PASS: TestCheckWitnessIsAValidLinearization (0.00s)
+=== RUN   TestCheckRespectsBudget
+--- PASS: TestCheckRespectsBudget (0.00s)
+=== RUN   TestCheckEmptyHistory
+--- PASS: TestCheckEmptyHistory (0.00s)
+=== RUN   TestCheckRejectsMalformedHistory
+--- PASS: TestCheckRejectsMalformedHistory (0.00s)
+=== RUN   TestHistoryValidate
+--- PASS: TestHistoryValidate (0.00s)
+=== RUN   TestCheckRandomizedSequentialNeverRejected
+--- PASS: TestCheckRandomizedSequentialNeverRejected (0.03s)
+=== RUN   TestKVModelHashIsStable
+--- PASS: TestKVModelHashIsStable (0.00s)
+=== RUN   TestKVModelApplyIsPure
+--- PASS: TestKVModelApplyIsPure (0.00s)
+=== RUN   TestKVModelSemantics
+--- PASS: TestKVModelSemantics (0.00s)
+=== RUN   TestModelsRejectUnknownVocabulary
+--- PASS: TestModelsRejectUnknownVocabulary (0.00s)
+=== RUN   TestRegisterModelSemantics
+--- PASS: TestRegisterModelSemantics (0.00s)
+PASS
+ok  	github.com/eigendash/graft/lcheck	1.454s
+=== RUN   TestCommitRuleRefusesEarlierTermMajority
+--- PASS: TestCommitRuleRefusesEarlierTermMajority (0.00s)
+=== RUN   TestFigure8OldTermEntryOnMajorityIsNotCommitted
+--- PASS: TestFigure8OldTermEntryOnMajorityIsNotCommitted (0.00s)
+=== RUN   TestFigure8LaterLeaderOverwritesUncommittedEntry
+--- PASS: TestFigure8LaterLeaderOverwritesUncommittedEntry (0.00s)
+=== RUN   TestConfigValidation
+--- PASS: TestConfigValidation (0.00s)
+=== RUN   TestSingleNodeElectsItselfAndCommits
+--- PASS: TestSingleNodeElectsItselfAndCommits (0.00s)
+=== RUN   TestProposeOnFollowerIsRejected
+--- PASS: TestProposeOnFollowerIsRejected (0.00s)
+=== RUN   TestThreeNodeReplicationAndLogMatching
+--- PASS: TestThreeNodeReplicationAndLogMatching (0.00s)
+=== RUN   TestElectionRestrictionRejectsIncompleteLog
+--- PASS: TestElectionRestrictionRejectsIncompleteLog (0.00s)
+=== RUN   TestVoteIsDurableBeforeItIsAnswered
+--- PASS: TestVoteIsDurableBeforeItIsAnswered (0.00s)
+=== RUN   TestBacktrackingCatchesUpLaggingFollower
+--- PASS: TestBacktrackingCatchesUpLaggingFollower (0.01s)
+=== RUN   TestSnapshotInstallCatchesUpCompactedFollower
+--- PASS: TestSnapshotInstallCatchesUpCompactedFollower (0.00s)
+=== RUN   TestAddVoterThenRemoveVoter
+--- PASS: TestAddVoterThenRemoveVoter (0.01s)
+=== RUN   TestRemovingTheLeaderStepsItDown
+--- PASS: TestRemovingTheLeaderStepsItDown (0.00s)
+=== RUN   TestCheckQuorumMakesAnIsolatedLeaderStepDown
+--- PASS: TestCheckQuorumMakesAnIsolatedLeaderStepDown (0.00s)
+=== RUN   TestDuplicateAndReorderedDeliveryIsTolerated
+--- PASS: TestDuplicateAndReorderedDeliveryIsTolerated (0.00s)
+=== RUN   TestRestartReplaysOnlyPersistedState
+--- PASS: TestRestartReplaysOnlyPersistedState (0.00s)
+=== RUN   TestSnapshotRoundTripThroughStorage
+--- PASS: TestSnapshotRoundTripThroughStorage (0.00s)
+=== RUN   TestSnapshotStructCloneIsDeep
+--- PASS: TestSnapshotStructCloneIsDeep (0.00s)
+=== RUN   TestConfChangeEncodingRoundTrip
+--- PASS: TestConfChangeEncodingRoundTrip (0.00s)
+=== RUN   TestSortedVotersDeduplicatesAndOrders
+--- PASS: TestSortedVotersDeduplicatesAndOrders (0.00s)
+=== RUN   TestCoreHasNoClockAndNoIO
+--- PASS: TestCoreHasNoClockAndNoIO (0.01s)
+=== RUN   TestInstallSnapshotSupersedesStaleSuffix
+--- PASS: TestInstallSnapshotSupersedesStaleSuffix (0.00s)
+=== RUN   TestLocalCompactionKeepsTheSuffix
+--- PASS: TestLocalCompactionKeepsTheSuffix (0.00s)
+=== RUN   TestStorageRejectsInconsistentMutations
+--- PASS: TestStorageRejectsInconsistentMutations (0.00s)
+=== RUN   TestTermOrderIsEnforcedOnAppend
+--- PASS: TestTermOrderIsEnforcedOnAppend (0.00s)
+=== RUN   TestOutboundAppendEntriesDoesNotAliasTheLog
+--- PASS: TestOutboundAppendEntriesDoesNotAliasTheLog (0.00s)
+PASS
+ok  	github.com/eigendash/graft/raft	1.330s
+=== RUN   TestSingleNodeCommitsClientCommands
+--- PASS: TestSingleNodeCommitsClientCommands (0.00s)
+=== RUN   TestClusterElectsExactlyOneLeaderPerTerm
+--- PASS: TestClusterElectsExactlyOneLeaderPerTerm (0.01s)
+=== RUN   TestElectionLiveness
+--- PASS: TestElectionLiveness (0.04s)
+=== RUN   TestDeterminism
+--- PASS: TestDeterminism (0.11s)
+=== RUN   TestPartitionPrimitives
+--- PASS: TestPartitionPrimitives (0.00s)
+=== RUN   TestCrashDiscardsVolatileState
+--- PASS: TestCrashDiscardsVolatileState (0.00s)
+=== RUN   TestDelayedMessagesArriveLate
+--- PASS: TestDelayedMessagesArriveLate (0.00s)
+=== RUN   TestRandomPartitionIsDeterministic
+--- PASS: TestRandomPartitionIsDeterministic (0.02s)
+=== RUN   TestRandomPartitionIsInstalledAndHealed
+--- PASS: TestRandomPartitionIsInstalledAndHealed (0.01s)
+=== RUN   TestModelCheckAcrossSeeds
+    verify_test.go:68: nodes=5 seeds=200 ticks=240000 committed=32804 elections=3385 crashes=2270 restarts=2242 partitions=3701 snapshots(created/installed)=908/2280 dropped=122755 duplicated=19296 reordered=52731
+    verify_test.go:68: nodes=3 seeds=200 ticks=240000 committed=15789 elections=2748 crashes=1350 restarts=1334 partitions=3582 snapshots(created/installed)=536/1365 dropped=70629 duplicated=9431 reordered=25540
+--- PASS: TestModelCheckAcrossSeeds (4.62s)
+=== RUN   TestModelCheckHarshConfig
+    verify_test.go:132: harsh: seeds=250 ticks=500000 committedDepthTotal=23190 clientOps=15000/15000 elections=8750 crashes=3747 restarts=3726 partitions=4845 snapshots(created/installed)=5570/4261
+--- PASS: TestModelCheckHarshConfig (8.49s)
+=== RUN   TestRegressionSeed35LogMatching
+    verify_test.go:205: seed 35 replay: ticks=2000 committedDepth=0 crashes=18 restarts=18 snapshots(created/installed)=0/0 timeout/roundtrip=0.21 (timing-marginal schedule; safety-only regression)
+--- PASS: TestRegressionSeed35LogMatching (0.20s)
+=== RUN   TestHarshFaultRatesAreSurvivable
+    verify_test.go:273: harsh rates, longer timeout: seeds=25 ticks=150000 committedDepthTotal=3027 clientOps=1875/1875 crashes=1456 partitions=4715 timeout/roundtrip=0.71
+--- PASS: TestHarshFaultRatesAreSurvivable (2.27s)
+=== RUN   TestSnapshotSupersedesStaleSuffixUnderCrash
+--- PASS: TestSnapshotSupersedesStaleSuffixUnderCrash (0.05s)
+=== RUN   TestLinearizabilityUnderFaultInjection
+    verify_test.go:380: linearizability: seeds=60 operations=1260 maxHistory=21 checkerSteps=1344 messages(dropped/duplicated/reordered)=9752/2309/6563 crashes=161
+--- PASS: TestLinearizabilityUnderFaultInjection (0.54s)
+=== RUN   TestSnapshotCatchUpAfterLongPartition
+--- PASS: TestSnapshotCatchUpAfterLongPartition (0.04s)
+=== RUN   TestSnapshotCatchUpViaQuiescence
+--- PASS: TestSnapshotCatchUpViaQuiescence (0.03s)
+=== RUN   TestRunOnceReportsTicksAndStats
+--- PASS: TestRunOnceReportsTicksAndStats (0.00s)
+=== RUN   TestSummarise
+--- PASS: TestSummarise (0.00s)
+PASS
+ok  	github.com/eigendash/graft/sim	17.994s
