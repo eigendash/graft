@@ -200,6 +200,8 @@ func addStats(dst *Stats, src Stats) {
 	dst.StorageWrites += src.StorageWrites
 	dst.Partitions += src.Partitions
 	dst.Heals += src.Heals
+	dst.LeaderlessTicks += src.LeaderlessTicks
+	dst.QuorumlessTicks += src.QuorumlessTicks
 	if src.MaxCommit > dst.MaxCommit {
 		dst.MaxCommit = src.MaxCommit
 	}
@@ -428,4 +430,64 @@ func MeasureThroughput(cfg Config, ticks int, w Workload) ThroughputResult {
 		Snapshots:    s.Stats().SnapshotsCreated,
 	}
 	return res
+}
+
+// BisectionRow is one configuration's measured progress under a fault schedule.
+//
+// It exists so that the claim "this cluster was not stalled, it was
+// timing-marginal" is a measurement rather than an assertion. The two fractions
+// separate the two possible diagnoses: a high leaderless fraction with a low
+// quorumless fraction means a majority was reachable and the cluster still
+// could not agree, which is the signature of an election timeout that does not
+// clear the network round trip.
+type BisectionRow struct {
+	Name   string
+	Config Config
+	Seeds  int
+	Ticks  int64
+	// ClientOps and ClientOpsTotal are the workload's completion, so a row that
+	// completed nothing cannot be mistaken for a quiet success.
+	ClientOps      int
+	ClientOpsTotal int
+	// CommittedDepth is the committed log length summed over seeds.
+	CommittedDepth int64
+	// LeaderlessFraction is the share of ticks on which no live node believed
+	// it was leader, and QuorumlessFraction the share on which no connected
+	// component of live nodes held a majority.
+	LeaderlessFraction float64
+	QuorumlessFraction float64
+	Elections          int64
+	SnapshotsCreated   int64
+}
+
+// MeasureBisection runs one configuration across seeds and reports how much
+// progress it made and how available the cluster was.
+func MeasureBisection(name string, cfg Config, seeds, ticks int, w Workload) BisectionRow {
+	row := BisectionRow{Name: name, Config: cfg, Seeds: seeds}
+	cfg.Invariants = true
+	cfg.Trace = false
+	cfg.Workload = w
+	var leaderless, quorumless int64
+	for i := 0; i < seeds; i++ {
+		c := cfg
+		c.Seed = cfg.Seed + int64(i)
+		s, err := New(c)
+		if err != nil {
+			continue
+		}
+		s.Run(ticks)
+		row.Ticks += s.Now()
+		row.ClientOps += s.WorkloadProgress().Completed
+		row.ClientOpsTotal += s.WorkloadProgress().Total
+		row.CommittedDepth += int64(s.Stats().MaxCommit)
+		leaderless += s.Stats().LeaderlessTicks
+		quorumless += s.Stats().QuorumlessTicks
+		row.Elections += s.Stats().Elections
+		row.SnapshotsCreated += s.Stats().SnapshotsCreated
+	}
+	if row.Ticks > 0 {
+		row.LeaderlessFraction = float64(leaderless) / float64(row.Ticks)
+		row.QuorumlessFraction = float64(quorumless) / float64(row.Ticks)
+	}
+	return row
 }

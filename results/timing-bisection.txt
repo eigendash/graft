@@ -1,0 +1,9 @@
+timing bisection: the same fault rates under different election timeouts
+seeds=25 ticks_per_seed=3000 workload=3 clients x 25 ops
+
+configuration                                  client ops    committed   leaderless quorumless  elections
+original et=6+j6 (worst-case RTT 28)           17/1875       48          0.940     0.009       708   STALLED
+same faults, et=12+j12                         1669/1875     2670        0.697     0.007       921   STALLED
+same faults, et=20+j20                         1875/1875     2652        0.481     0.008       592   PASS
+original et=6+j6, zero loss/dup/reorder        820/1875      1696        0.805     0.008       2020   STALLED
+new harsh et=8+j8, lat<=4, reorder window 4    1875/1875     3096        0.326     0.002       1322   PASS

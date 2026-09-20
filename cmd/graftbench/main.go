@@ -63,6 +63,9 @@ func main() {
 	survivable := survivableConfig()
 	r.Safety("sweep", survivable, 25, 6000)
 
+	r.Section("timing bisection: the same fault rates under different election timeouts")
+	r.TimingBisection()
+
 	r.Section("linearizability under fault injection")
 	lin := linearizabilityConfig()
 	r.Linearizability(lin, *linSeeds, 800, 4000)
@@ -126,6 +129,10 @@ func main() {
 	r.Printf("note                      lcheck is exponential in the worst case; histories are kept short on purpose")
 
 	text := r.String()
+	if err := os.WriteFile(filepath.Join(*out, "timing-bisection.txt"), []byte(r.bisection.String()), 0o644); err != nil {
+		fmt.Fprintln(os.Stderr, "graftbench:", err)
+		os.Exit(1)
+	}
 	if err := os.WriteFile(filepath.Join(*out, "graftbench.txt"), []byte(text), 0o644); err != nil {
 		fmt.Fprintln(os.Stderr, "graftbench:", err)
 		os.Exit(1)
@@ -140,6 +147,7 @@ func main() {
 		os.Exit(1)
 	}
 	fmt.Print(text)
+	fmt.Println("wrote results/timing-bisection.txt")
 	if r.failed {
 		fmt.Fprintln(os.Stderr, "graftbench: at least one measurement was not a pass")
 		os.Exit(1)
@@ -205,9 +213,10 @@ func linearizabilityConfig() sim.Config {
 // --- reporting ---------------------------------------------------------------
 
 type report struct {
-	b       strings.Builder
-	summary []map[string]any
-	failed  bool
+	b         strings.Builder
+	bisection strings.Builder
+	summary   []map[string]any
+	failed    bool
 }
 
 func (r *report) Section(name string) {
@@ -324,6 +333,95 @@ func (r *report) Linearizability(cfg sim.Config, seeds, faultTicks, drainTicks i
 		"wall_clock_seconds":     elapsed.Seconds(),
 		"verdict":                verdict,
 	})
+}
+
+// originalTimingConfig is the configuration whose seed-35 run first exposed the
+// snapshot bug, kept exactly as it was: 20% loss, 10% duplication, 25%
+// reordering with an 8-tick window, partitions and crashes, against an election
+// timeout of 6..11 ticks. The router can delay a message by up to 14 ticks in
+// each direction, so the worst-case round trip is 28 ticks and a follower can
+// time out while a heartbeat is genuinely in flight.
+func originalTimingConfig(seed int64) sim.Config {
+	return sim.Config{
+		Seed: seed, Nodes: 5,
+		ElectionTick: 6, ElectionJitter: 6, HeartbeatTick: 2,
+		Latency:  sim.Latency{Min: 1, Max: 6},
+		DropRate: 0.20, DuplicateRate: 0.10, ReorderRate: 0.25, ReorderWindow: 8,
+		PartitionRate: 0.03, HealRate: 0.08,
+		CrashRate: 0.002, RestartDelay: 10,
+		SnapshotThreshold: 20,
+	}
+}
+
+// TimingBisection is the evidence behind the claim that the original
+// configuration was timing-marginal rather than stalled. Every row keeps the
+// fault rates identical and changes one thing, so the effect of the change is
+// attributable.
+func (r *report) TimingBisection() {
+	const seeds, ticks = 25, 3000
+	work := sim.Workload{Clients: 3, OpsPerClient: 25, Keys: 3, Values: 3, ClientTimeout: 60}
+	base := originalTimingConfig(0)
+
+	withTimeout := func(et, jitter int) sim.Config {
+		c := base
+		c.ElectionTick, c.ElectionJitter = et, jitter
+		return c
+	}
+	noLoss := func() sim.Config {
+		c := base
+		c.DropRate, c.DuplicateRate, c.ReorderRate = 0, 0, 0
+		return c
+	}
+
+	rows := []sim.BisectionRow{
+		sim.MeasureBisection("original et=6+j6 (worst-case RTT 28)", base, seeds, ticks, work),
+		sim.MeasureBisection("same faults, et=12+j12", withTimeout(12, 12), seeds, ticks, work),
+		sim.MeasureBisection("same faults, et=20+j20", withTimeout(20, 20), seeds, ticks, work),
+		sim.MeasureBisection("original et=6+j6, zero loss/dup/reorder", noLoss(), seeds, ticks, work),
+		sim.MeasureBisection("new harsh et=8+j8, lat<=4, reorder window 4", harshConfig(), seeds, ticks, work),
+	}
+	r.Printf("seeds=%d ticks_per_seed=%d workload=%d clients x %d ops",
+		seeds, ticks, work.Clients, work.OpsPerClient)
+	r.Printf("")
+	r.Printf("%-46s %-13s %-11s %-9s %-11s %s",
+		"configuration", "client ops", "committed", "leaderless", "quorumless", "elections")
+	for _, row := range rows {
+		ops := fmt.Sprintf("%d/%d", row.ClientOps, row.ClientOpsTotal)
+		verdict := "PASS"
+		if row.ClientOps != row.ClientOpsTotal {
+			verdict = "STALLED"
+		}
+		line := fmt.Sprintf("%-46s %-13s %-11d %-9.3f %-11.3f %d   %s",
+			row.Name, ops, row.CommittedDepth,
+			row.LeaderlessFraction, row.QuorumlessFraction, row.Elections, verdict)
+		r.Printf("%s", line)
+		if r.bisection.Len() == 0 {
+			fmt.Fprintf(&r.bisection, "timing bisection: the same fault rates under different election timeouts\n")
+			fmt.Fprintf(&r.bisection, "seeds=%d ticks_per_seed=%d workload=%d clients x %d ops\n\n",
+				seeds, ticks, work.Clients, work.OpsPerClient)
+			fmt.Fprintf(&r.bisection, "%-46s %-13s %-11s %-9s %-11s %s\n",
+				"configuration", "client ops", "committed", "leaderless", "quorumless", "elections")
+		}
+		fmt.Fprintf(&r.bisection, "%s\n", line)
+		r.record("timing_bisection", map[string]any{
+			"configuration":       row.Name,
+			"seeds":               row.Seeds,
+			"ticks":               row.Ticks,
+			"client_ops":          row.ClientOps,
+			"client_ops_total":    row.ClientOpsTotal,
+			"committed_depth":     row.CommittedDepth,
+			"leaderless_fraction": row.LeaderlessFraction,
+			"quorumless_fraction": row.QuorumlessFraction,
+			"elections":           row.Elections,
+			"election_tick":       row.Config.ElectionTick,
+			"election_jitter":     row.Config.ElectionJitter,
+			"worst_case_rtt":      row.Config.WorstCaseRoundTrip(),
+			"drop_rate":           row.Config.DropRate,
+			"duplicate_rate":      row.Config.DuplicateRate,
+			"reorder_rate":        row.Config.ReorderRate,
+			"verdict":             verdict,
+		})
+	}
 }
 
 func (r *report) Election(e sim.ElectionStats) {

@@ -3,7 +3,7 @@
 go_version       go1.27.1
 goos/goarch      darwin/arm64
 cpus             12
-started          2026-10-07T13:37:21Z
+started          2026-10-07T13:43:19Z
 sim_seeds        model=200 linearizability=60 elections=200
 
 == model check: 3 nodes, cheap faults ==
@@ -20,7 +20,7 @@ snapshots_created        594
 snapshots_installed      1460
 messages                 sent=343250 delivered=335293 dropped=72487 duplicated=10011 reordered=27541
 storage_writes           54830
-wall_clock               197.541042ms
+wall_clock               352.114291ms
 verdict                  PASS
 
 == model check: 5 nodes, cheap faults ==
@@ -37,7 +37,7 @@ snapshots_created        1260
 snapshots_installed      2470
 messages                 sent=694975 delivered=679120 dropped=127847 duplicated=20321 reordered=55385
 storage_writes           113259
-wall_clock               377.281209ms
+wall_clock               582.692041ms
 verdict                  PASS
 
 == model check: 5 nodes, harsh faults, 250 seeds ==
@@ -54,7 +54,7 @@ snapshots_created        5570
 snapshots_installed      4261
 messages                 sent=1381929 delivered=1366251 dropped=291617 duplicated=125842 reordered=207697
 storage_writes           302811
-wall_clock               916.236875ms
+wall_clock               1.204597042s
 verdict                  PASS
 
 == model check: same fault rates, viable election timeout (seed 35..59) ==
@@ -71,8 +71,18 @@ snapshots_created        653
 snapshots_installed      1563
 messages                 sent=222101 delivered=217678 dropped=78017 duplicated=20072 reordered=55387
 storage_writes           39755
-wall_clock               203.116084ms
+wall_clock               254.086709ms
 verdict                  PASS
+
+== timing bisection: the same fault rates under different election timeouts ==
+seeds=25 ticks_per_seed=3000 workload=3 clients x 25 ops
+
+configuration                                  client ops    committed   leaderless quorumless  elections
+original et=6+j6 (worst-case RTT 28)           17/1875       48          0.940     0.009       708   STALLED
+same faults, et=12+j12                         1669/1875     2670        0.697     0.007       921   STALLED
+same faults, et=20+j20                         1875/1875     2652        0.481     0.008       592   PASS
+original et=6+j6, zero loss/dup/reorder        820/1875      1696        0.805     0.008       2020   STALLED
+new harsh et=8+j8, lat<=4, reorder window 4    1875/1875     3096        0.326     0.002       1322   PASS
 
 == linearizability under fault injection ==
 seeds                    60
@@ -86,7 +96,7 @@ clients_left_waiting     0
 elections                365
 crashes                  161
 messages                 dropped=9752 duplicated=2309 reordered=6563
-wall_clock               48.657875ms
+wall_clock               61.845209ms
 verdict                  PASS
 
 == election timing, in virtual ticks (1 tick = 1ms) ==
@@ -96,25 +106,25 @@ nodes=7 samples=200 cold: min=12 median=14 p90=18 p99=27 max=36 | failover: min=
 
 == kv throughput and latency by cluster size and hop latency ==
 -- delay model: uniform --
-delay=uniform  nodes=3 hop_latency=1ms clients=12 ops=2400 election_ticks=23 measured_ticks=601 ops_per_virtual_second=3993 client_latency_ms(median/p99/max)=2/2/4 wall_clock=10.534583ms PASS
-delay=uniform  nodes=3 hop_latency=10ms clients=12 ops=2400 election_ticks=228 measured_ticks=4219 ops_per_virtual_second=569 client_latency_ms(median/p99/max)=20/20/40 wall_clock=12.246125ms PASS
-delay=uniform  nodes=3 hop_latency=50ms clients=12 ops=2400 election_ticks=1108 measured_ticks=20299 ops_per_virtual_second=118 client_latency_ms(median/p99/max)=100/100/200 wall_clock=18.308042ms PASS
-delay=uniform  nodes=5 hop_latency=1ms clients=12 ops=2400 election_ticks=23 measured_ticks=601 ops_per_virtual_second=3993 client_latency_ms(median/p99/max)=2/2/4 wall_clock=19.580167ms PASS
-delay=uniform  nodes=5 hop_latency=10ms clients=12 ops=2400 election_ticks=228 measured_ticks=4219 ops_per_virtual_second=569 client_latency_ms(median/p99/max)=20/20/40 wall_clock=21.797625ms PASS
-delay=uniform  nodes=5 hop_latency=50ms clients=12 ops=2400 election_ticks=1108 measured_ticks=20299 ops_per_virtual_second=118 client_latency_ms(median/p99/max)=100/100/200 wall_clock=32.614125ms PASS
-delay=uniform  nodes=7 hop_latency=1ms clients=12 ops=2400 election_ticks=23 measured_ticks=601 ops_per_virtual_second=3993 client_latency_ms(median/p99/max)=2/2/4 wall_clock=27.958375ms PASS
-delay=uniform  nodes=7 hop_latency=10ms clients=12 ops=2400 election_ticks=228 measured_ticks=4219 ops_per_virtual_second=569 client_latency_ms(median/p99/max)=20/20/40 wall_clock=32.48775ms PASS
-delay=uniform  nodes=7 hop_latency=50ms clients=12 ops=2400 election_ticks=1108 measured_ticks=20299 ops_per_virtual_second=118 client_latency_ms(median/p99/max)=100/100/200 wall_clock=42.5615ms PASS
+delay=uniform  nodes=3 hop_latency=1ms clients=12 ops=2400 election_ticks=23 measured_ticks=601 ops_per_virtual_second=3993 client_latency_ms(median/p99/max)=2/2/4 wall_clock=13.224167ms PASS
+delay=uniform  nodes=3 hop_latency=10ms clients=12 ops=2400 election_ticks=228 measured_ticks=4219 ops_per_virtual_second=569 client_latency_ms(median/p99/max)=20/20/40 wall_clock=15.612959ms PASS
+delay=uniform  nodes=3 hop_latency=50ms clients=12 ops=2400 election_ticks=1108 measured_ticks=20299 ops_per_virtual_second=118 client_latency_ms(median/p99/max)=100/100/200 wall_clock=32.128917ms PASS
+delay=uniform  nodes=5 hop_latency=1ms clients=12 ops=2400 election_ticks=23 measured_ticks=601 ops_per_virtual_second=3993 client_latency_ms(median/p99/max)=2/2/4 wall_clock=24.76875ms PASS
+delay=uniform  nodes=5 hop_latency=10ms clients=12 ops=2400 election_ticks=228 measured_ticks=4219 ops_per_virtual_second=569 client_latency_ms(median/p99/max)=20/20/40 wall_clock=29.067584ms PASS
+delay=uniform  nodes=5 hop_latency=50ms clients=12 ops=2400 election_ticks=1108 measured_ticks=20299 ops_per_virtual_second=118 client_latency_ms(median/p99/max)=100/100/200 wall_clock=43.474834ms PASS
+delay=uniform  nodes=7 hop_latency=1ms clients=12 ops=2400 election_ticks=23 measured_ticks=601 ops_per_virtual_second=3993 client_latency_ms(median/p99/max)=2/2/4 wall_clock=36.168ms PASS
+delay=uniform  nodes=7 hop_latency=10ms clients=12 ops=2400 election_ticks=228 measured_ticks=4219 ops_per_virtual_second=569 client_latency_ms(median/p99/max)=20/20/40 wall_clock=44.642042ms PASS
+delay=uniform  nodes=7 hop_latency=50ms clients=12 ops=2400 election_ticks=1108 measured_ticks=20299 ops_per_virtual_second=118 client_latency_ms(median/p99/max)=100/100/200 wall_clock=62.557083ms PASS
 -- delay model: jittered --
-delay=jittered nodes=3 hop_latency=1ms clients=12 ops=2400 election_ticks=23 measured_ticks=731 ops_per_virtual_second=3283 client_latency_ms(median/p99/max)=2/3/4 wall_clock=9.833083ms PASS
-delay=jittered nodes=3 hop_latency=10ms clients=12 ops=2400 election_ticks=234 measured_ticks=5614 ops_per_virtual_second=428 client_latency_ms(median/p99/max)=25/34/52 wall_clock=11.115375ms PASS
-delay=jittered nodes=3 hop_latency=50ms clients=12 ops=2400 election_ticks=1139 measured_ticks=27173 ops_per_virtual_second=88 client_latency_ms(median/p99/max)=128/169/234 wall_clock=20.13575ms PASS
-delay=jittered nodes=5 hop_latency=1ms clients=12 ops=2400 election_ticks=23 measured_ticks=769 ops_per_virtual_second=3121 client_latency_ms(median/p99/max)=2/3/5 wall_clock=18.358666ms PASS
-delay=jittered nodes=5 hop_latency=10ms clients=12 ops=2400 election_ticks=232 measured_ticks=5689 ops_per_virtual_second=422 client_latency_ms(median/p99/max)=26/33/59 wall_clock=21.406708ms PASS
-delay=jittered nodes=5 hop_latency=50ms clients=12 ops=2400 election_ticks=1146 measured_ticks=27757 ops_per_virtual_second=86 client_latency_ms(median/p99/max)=133/166/281 wall_clock=33.189375ms PASS
-delay=jittered nodes=7 hop_latency=1ms clients=12 ops=2400 election_ticks=23 measured_ticks=788 ops_per_virtual_second=3046 client_latency_ms(median/p99/max)=3/3/5 wall_clock=27.882583ms PASS
-delay=jittered nodes=7 hop_latency=10ms clients=12 ops=2400 election_ticks=234 measured_ticks=5729 ops_per_virtual_second=419 client_latency_ms(median/p99/max)=27/32/57 wall_clock=33.603791ms PASS
-delay=jittered nodes=7 hop_latency=50ms clients=12 ops=2400 election_ticks=1140 measured_ticks=27804 ops_per_virtual_second=86 client_latency_ms(median/p99/max)=135/160/283 wall_clock=47.130584ms PASS
+delay=jittered nodes=3 hop_latency=1ms clients=12 ops=2400 election_ticks=23 measured_ticks=731 ops_per_virtual_second=3283 client_latency_ms(median/p99/max)=2/3/4 wall_clock=12.498667ms PASS
+delay=jittered nodes=3 hop_latency=10ms clients=12 ops=2400 election_ticks=234 measured_ticks=5614 ops_per_virtual_second=428 client_latency_ms(median/p99/max)=25/34/52 wall_clock=16.931333ms PASS
+delay=jittered nodes=3 hop_latency=50ms clients=12 ops=2400 election_ticks=1139 measured_ticks=27173 ops_per_virtual_second=88 client_latency_ms(median/p99/max)=128/169/234 wall_clock=29.40275ms PASS
+delay=jittered nodes=5 hop_latency=1ms clients=12 ops=2400 election_ticks=23 measured_ticks=769 ops_per_virtual_second=3121 client_latency_ms(median/p99/max)=2/3/5 wall_clock=24.849083ms PASS
+delay=jittered nodes=5 hop_latency=10ms clients=12 ops=2400 election_ticks=232 measured_ticks=5689 ops_per_virtual_second=422 client_latency_ms(median/p99/max)=26/33/59 wall_clock=42.378667ms PASS
+delay=jittered nodes=5 hop_latency=50ms clients=12 ops=2400 election_ticks=1146 measured_ticks=27757 ops_per_virtual_second=86 client_latency_ms(median/p99/max)=133/166/281 wall_clock=52.54275ms PASS
+delay=jittered nodes=7 hop_latency=1ms clients=12 ops=2400 election_ticks=23 measured_ticks=788 ops_per_virtual_second=3046 client_latency_ms(median/p99/max)=3/3/5 wall_clock=44.664542ms PASS
+delay=jittered nodes=7 hop_latency=10ms clients=12 ops=2400 election_ticks=234 measured_ticks=5729 ops_per_virtual_second=419 client_latency_ms(median/p99/max)=27/32/57 wall_clock=48.628958ms PASS
+delay=jittered nodes=7 hop_latency=50ms clients=12 ops=2400 election_ticks=1140 measured_ticks=27804 ops_per_virtual_second=86 client_latency_ms(median/p99/max)=135/160/283 wall_clock=73.178ms PASS
 
 == determinism ==
 events_recorded          4505

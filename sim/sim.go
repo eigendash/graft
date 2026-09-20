@@ -195,6 +195,12 @@ type Stats struct {
 	// by the replication factor and by catch-up, whereas the committed log has
 	// a length.
 	MaxCommit raft.Index
+	// LeaderlessTicks counts ticks on which no live node believed it was
+	// leader, and QuorumlessTicks counts ticks on which no connected component
+	// of live nodes held a majority. The two are different diagnoses: the
+	// first is "nobody has been elected", the second is "nobody could be".
+	LeaderlessTicks int64
+	QuorumlessTicks int64
 }
 
 // envelope is one in-flight message.
@@ -342,6 +348,10 @@ type Sim struct {
 	logEntries    map[logKey]uint64
 
 	wl *workloadState
+
+	// Reused by anyQuorumConnected, which runs on every tick.
+	scratchSeen  []bool
+	scratchStack []raft.NodeID
 }
 
 type logKey struct {
@@ -679,9 +689,67 @@ func (s *Sim) Step() {
 	s.runWorkload()
 	s.drain()
 	s.injectFaults()
+	if s.leaderCount() == 0 {
+		s.stats.LeaderlessTicks++
+	}
+	if !s.anyQuorumConnected() {
+		s.stats.QuorumlessTicks++
+	}
 	if s.cfg.Invariants {
 		s.checkInvariants()
 	}
+}
+
+// leaderCount is Leaders without the allocation, because it runs every tick.
+func (s *Sim) leaderCount() int {
+	n := 0
+	for _, ns := range s.nodes {
+		if !ns.down && ns.server.Node().State() == raft.StateLeader {
+			n++
+		}
+	}
+	return n
+}
+
+// anyQuorumConnected reports whether some connected component of the live nodes
+// holds a majority of the configured cluster. A quorum of one is reachable
+// from any single live node, so a single-node cluster is always connected.
+//
+// The scratch buffer is reused because this runs on every tick of every sweep.
+func (s *Sim) anyQuorumConnected() bool {
+	quorum := len(s.nodes)/2 + 1
+	if s.scratchSeen == nil {
+		s.scratchSeen = make([]bool, len(s.nodes)+1)
+	}
+	for i := range s.scratchSeen {
+		s.scratchSeen[i] = false
+	}
+	for _, start := range s.nodes {
+		if start.down || s.scratchSeen[start.id] {
+			continue
+		}
+		size := 0
+		stack := append(s.scratchStack[:0], start.id)
+		for len(stack) > 0 {
+			x := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			if x == 0 || s.scratchSeen[x] {
+				continue
+			}
+			s.scratchSeen[x] = true
+			size++
+			for _, y := range s.nodes {
+				if !s.scratchSeen[y.id] && !y.down && s.reachable(x, y.id) {
+					stack = append(stack, y.id)
+				}
+			}
+		}
+		s.scratchStack = stack
+		if size >= quorum {
+			return true
+		}
+	}
+	return false
 }
 
 // Run advances the simulation by n ticks.

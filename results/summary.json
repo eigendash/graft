@@ -20,7 +20,7 @@
     "storage_writes": 54830,
     "ticks_per_seed": 1200,
     "verdict": "PASS",
-    "wall_clock_seconds": 0.197541042
+    "wall_clock_seconds": 0.352114291
   },
   {
     "committed_log_depth": 8086,
@@ -43,7 +43,7 @@
     "storage_writes": 113259,
     "ticks_per_seed": 1200,
     "verdict": "PASS",
-    "wall_clock_seconds": 0.377281209
+    "wall_clock_seconds": 0.582692041
   },
   {
     "committed_log_depth": 23190,
@@ -66,7 +66,7 @@
     "storage_writes": 302811,
     "ticks_per_seed": 2000,
     "verdict": "PASS",
-    "wall_clock_seconds": 0.916236875
+    "wall_clock_seconds": 1.204597042
   },
   {
     "committed_log_depth": 3027,
@@ -89,7 +89,102 @@
     "storage_writes": 39755,
     "ticks_per_seed": 6000,
     "verdict": "PASS",
-    "wall_clock_seconds": 0.203116084
+    "wall_clock_seconds": 0.254086709
+  },
+  {
+    "client_ops": 17,
+    "client_ops_total": 1875,
+    "committed_depth": 48,
+    "configuration": "original et=6+j6 (worst-case RTT 28)",
+    "drop_rate": 0.2,
+    "duplicate_rate": 0.1,
+    "election_jitter": 6,
+    "election_tick": 6,
+    "elections": 708,
+    "kind": "timing_bisection",
+    "leaderless_fraction": 0.9404533333333334,
+    "quorumless_fraction": 0.009,
+    "reorder_rate": 0.25,
+    "seeds": 25,
+    "ticks": 75000,
+    "verdict": "STALLED",
+    "worst_case_rtt": 28
+  },
+  {
+    "client_ops": 1669,
+    "client_ops_total": 1875,
+    "committed_depth": 2670,
+    "configuration": "same faults, et=12+j12",
+    "drop_rate": 0.2,
+    "duplicate_rate": 0.1,
+    "election_jitter": 12,
+    "election_tick": 12,
+    "elections": 921,
+    "kind": "timing_bisection",
+    "leaderless_fraction": 0.69716,
+    "quorumless_fraction": 0.007066666666666666,
+    "reorder_rate": 0.25,
+    "seeds": 25,
+    "ticks": 75000,
+    "verdict": "STALLED",
+    "worst_case_rtt": 28
+  },
+  {
+    "client_ops": 1875,
+    "client_ops_total": 1875,
+    "committed_depth": 2652,
+    "configuration": "same faults, et=20+j20",
+    "drop_rate": 0.2,
+    "duplicate_rate": 0.1,
+    "election_jitter": 20,
+    "election_tick": 20,
+    "elections": 592,
+    "kind": "timing_bisection",
+    "leaderless_fraction": 0.4805066666666667,
+    "quorumless_fraction": 0.008293333333333333,
+    "reorder_rate": 0.25,
+    "seeds": 25,
+    "ticks": 75000,
+    "verdict": "PASS",
+    "worst_case_rtt": 28
+  },
+  {
+    "client_ops": 820,
+    "client_ops_total": 1875,
+    "committed_depth": 1696,
+    "configuration": "original et=6+j6, zero loss/dup/reorder",
+    "drop_rate": 0,
+    "duplicate_rate": 0,
+    "election_jitter": 6,
+    "election_tick": 6,
+    "elections": 2020,
+    "kind": "timing_bisection",
+    "leaderless_fraction": 0.80528,
+    "quorumless_fraction": 0.008426666666666667,
+    "reorder_rate": 0,
+    "seeds": 25,
+    "ticks": 75000,
+    "verdict": "STALLED",
+    "worst_case_rtt": 12
+  },
+  {
+    "client_ops": 1875,
+    "client_ops_total": 1875,
+    "committed_depth": 3096,
+    "configuration": "new harsh et=8+j8, lat\u003c=4, reorder window 4",
+    "drop_rate": 0.15,
+    "duplicate_rate": 0.1,
+    "election_jitter": 8,
+    "election_tick": 8,
+    "elections": 1322,
+    "kind": "timing_bisection",
+    "leaderless_fraction": 0.3263066666666667,
+    "quorumless_fraction": 0.0016133333333333334,
+    "reorder_rate": 0.15,
+    "seeds": 25,
+    "ticks": 75000,
+    "verdict": "PASS",
+    "worst_case_rtt": 16
   },
   {
     "checker_steps": 1344,
@@ -101,7 +196,7 @@
     "seeds": 60,
     "seeds_not_linearizable": 0,
     "verdict": "PASS",
-    "wall_clock_seconds": 0.048657875
+    "wall_clock_seconds": 0.061845209
   },
   {
     "cold_max": 36,
@@ -163,7 +258,7 @@
     "ops_per_virtual_second": 3993.3444259567386,
     "verdict": "PASS",
     "virtual_ticks": 601,
-    "wall_clock_seconds": 0.010534583
+    "wall_clock_seconds": 0.013224167
   },
   {
     "client_latency_max_ms": 40,
@@ -180,7 +275,7 @@
     "ops_per_virtual_second": 568.8551789523584,
     "verdict": "PASS",
     "virtual_ticks": 4219,
-    "wall_clock_seconds": 0.012246125
+    "wall_clock_seconds": 0.015612959
   },
   {
     "client_latency_max_ms": 200,
@@ -197,7 +292,7 @@
     "ops_per_virtual_second": 118.2324252426228,
     "verdict": "PASS",
     "virtual_ticks": 20299,
-    "wall_clock_seconds": 0.018308042
+    "wall_clock_seconds": 0.032128917
   },
   {
     "client_latency_max_ms": 4,
@@ -214,7 +309,7 @@
     "ops_per_virtual_second": 3993.3444259567386,
     "verdict": "PASS",
     "virtual_ticks": 601,
-    "wall_clock_seconds": 0.019580167
+    "wall_clock_seconds": 0.02476875
   },
   {
     "client_latency_max_ms": 40,
@@ -231,7 +326,7 @@
     "ops_per_virtual_second": 568.8551789523584,
     "verdict": "PASS",
     "virtual_ticks": 4219,
-    "wall_clock_seconds": 0.021797625
+    "wall_clock_seconds": 0.029067584
   },
   {
     "client_latency_max_ms": 200,
@@ -248,7 +343,7 @@
     "ops_per_virtual_second": 118.2324252426228,
     "verdict": "PASS",
     "virtual_ticks": 20299,
-    "wall_clock_seconds": 0.032614125
+    "wall_clock_seconds": 0.043474834
   },
   {
     "client_latency_max_ms": 4,
@@ -265,7 +360,7 @@
     "ops_per_virtual_second": 3993.3444259567386,
     "verdict": "PASS",
     "virtual_ticks": 601,
-    "wall_clock_seconds": 0.027958375
+    "wall_clock_seconds": 0.036168
   },
   {
     "client_latency_max_ms": 40,
@@ -282,7 +377,7 @@
     "ops_per_virtual_second": 568.8551789523584,
     "verdict": "PASS",
     "virtual_ticks": 4219,
-    "wall_clock_seconds": 0.03248775
+    "wall_clock_seconds": 0.044642042
   },
   {
     "client_latency_max_ms": 200,
@@ -299,7 +394,7 @@
     "ops_per_virtual_second": 118.2324252426228,
     "verdict": "PASS",
     "virtual_ticks": 20299,
-    "wall_clock_seconds": 0.0425615
+    "wall_clock_seconds": 0.062557083
   },
   {
     "client_latency_max_ms": 4,
@@ -316,7 +411,7 @@
     "ops_per_virtual_second": 3283.173734610123,
     "verdict": "PASS",
     "virtual_ticks": 731,
-    "wall_clock_seconds": 0.009833083
+    "wall_clock_seconds": 0.012498667
   },
   {
     "client_latency_max_ms": 52,
@@ -333,7 +428,7 @@
     "ops_per_virtual_second": 427.5026718916993,
     "verdict": "PASS",
     "virtual_ticks": 5614,
-    "wall_clock_seconds": 0.011115375
+    "wall_clock_seconds": 0.016931333
   },
   {
     "client_latency_max_ms": 234,
@@ -350,7 +445,7 @@
     "ops_per_virtual_second": 88.3229676517131,
     "verdict": "PASS",
     "virtual_ticks": 27173,
-    "wall_clock_seconds": 0.02013575
+    "wall_clock_seconds": 0.02940275
   },
   {
     "client_latency_max_ms": 5,
@@ -367,7 +462,7 @@
     "ops_per_virtual_second": 3120.936280884265,
     "verdict": "PASS",
     "virtual_ticks": 769,
-    "wall_clock_seconds": 0.018358666
+    "wall_clock_seconds": 0.024849083
   },
   {
     "client_latency_max_ms": 59,
@@ -384,7 +479,7 @@
     "ops_per_virtual_second": 421.86676041483565,
     "verdict": "PASS",
     "virtual_ticks": 5689,
-    "wall_clock_seconds": 0.021406708
+    "wall_clock_seconds": 0.042378667
   },
   {
     "client_latency_max_ms": 281,
@@ -401,7 +496,7 @@
     "ops_per_virtual_second": 86.46467557733185,
     "verdict": "PASS",
     "virtual_ticks": 27757,
-    "wall_clock_seconds": 0.033189375
+    "wall_clock_seconds": 0.05254275
   },
   {
     "client_latency_max_ms": 5,
@@ -418,7 +513,7 @@
     "ops_per_virtual_second": 3045.6852791878173,
     "verdict": "PASS",
     "virtual_ticks": 788,
-    "wall_clock_seconds": 0.027882583
+    "wall_clock_seconds": 0.044664542
   },
   {
     "client_latency_max_ms": 57,
@@ -435,7 +530,7 @@
     "ops_per_virtual_second": 418.921277709897,
     "verdict": "PASS",
     "virtual_ticks": 5729,
-    "wall_clock_seconds": 0.033603791
+    "wall_clock_seconds": 0.048628958
   },
   {
     "client_latency_max_ms": 283,
@@ -452,7 +547,7 @@
     "ops_per_virtual_second": 86.31851532153647,
     "verdict": "PASS",
     "virtual_ticks": 27804,
-    "wall_clock_seconds": 0.047130584
+    "wall_clock_seconds": 0.073178
   },
   {
     "digest_a": 14652758710403346467,
