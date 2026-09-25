@@ -1,0 +1,66 @@
+Proof that the regression tests fail against the code they were written for
+==========================================================================
+
+Each fix is reverted in raft/node.go, the pinning test is run, and the
+source is restored. Reproduce with: scripts/prove-regressions.sh
+
+------------------------------------------------------------------
+reverted fix: Storage.InstallSnapshot clears the whole local log (bug 1)
+sed expression: s|n.cfg.Storage.InstallSnapshot(\*snap)|n.cfg.Storage.SaveSnapshot(*snap)|
+test: go test -run TestInstallSnapshotSupersedesStaleSuffix -v ./raft/
+expected: FAIL
+
+=== RUN   TestInstallSnapshotSupersedesStaleSuffix
+    regression_test.go:54: a restart resurrected a stale suffix: last index 4, want 2
+--- FAIL: TestInstallSnapshotSupersedesStaleSuffix (0.00s)
+FAIL
+FAIL	github.com/eigendash/graft/raft	0.258s
+FAIL
+
+observed exit status: 1
+VERDICT: the regression test detected the bug, as intended
+
+------------------------------------------------------------------
+fix restored; test: go test -run TestInstallSnapshotSupersedesStaleSuffix ./raft/
+expected: PASS
+
+ok  	github.com/eigendash/graft/raft	0.677s
+
+------------------------------------------------------------------
+reverted fix: sendAppend copies the entries out of the log (bug 2)
+sed expression: /^	ents = append(\[\]Entry(nil), ents\.\.\.)$/d
+test: go test -run TestOutboundAppendEntriesDoesNotAliasTheLog -v ./raft/
+expected: FAIL
+
+=== RUN   TestOutboundAppendEntriesDoesNotAliasTheLog
+    regression_test.go:227: an in-flight AppendEntries changed after it was sent: entry 2 was {term:1 index:3 data:c} and is now {term:3 index:3 data:X}
+--- FAIL: TestOutboundAppendEntriesDoesNotAliasTheLog (0.00s)
+FAIL
+FAIL	github.com/eigendash/graft/raft	0.251s
+FAIL
+
+observed exit status: 1
+VERDICT: the regression test detected the bug, as intended
+
+------------------------------------------------------------------
+fix restored; test: go test -run TestOutboundAppendEntriesDoesNotAliasTheLog ./raft/
+expected: PASS
+
+ok  	github.com/eigendash/graft/raft	0.254s
+
+------------------------------------------------------------------
+Both fixes are in place and the tree is restored:
+
+ M Makefile
+ M README.md
+ M cmd/graftbench/main.go
+ M results/bench.txt
+ M results/graftbench.txt
+ M results/summary.json
+ M results/tests.txt
+ M sim/sim.go
+ M sim/verify.go
+?? results/regressions.txt
+?? results/timing-bisection.txt
+?? scripts/
+(no output above means the working tree is unchanged)
