@@ -1,3 +1,5 @@
+$ go test -race -count=1 -timeout 1800s -v ./...
+
 ?   	github.com/eigendash/graft/cmd/graftbench	[no test files]
 === RUN   TestCommandEncodingRoundTrip
 --- PASS: TestCommandEncodingRoundTrip (0.00s)
@@ -22,7 +24,7 @@
 === RUN   TestServerRejectsProposalOnFollower
 --- PASS: TestServerRejectsProposalOnFollower (0.00s)
 PASS
-ok  	github.com/eigendash/graft/kv	1.165s
+ok  	github.com/eigendash/graft/kv	1.504s
 === RUN   TestCheckRejectsNonLinearizableRegister
 === RUN   TestCheckRejectsNonLinearizableRegister/read_misses_a_completed_write
 === RUN   TestCheckRejectsNonLinearizableRegister/final_read_ignores_two_completed_writes
@@ -68,7 +70,7 @@ ok  	github.com/eigendash/graft/kv	1.165s
 === RUN   TestHistoryValidate
 --- PASS: TestHistoryValidate (0.00s)
 === RUN   TestCheckRandomizedSequentialNeverRejected
---- PASS: TestCheckRandomizedSequentialNeverRejected (0.03s)
+--- PASS: TestCheckRandomizedSequentialNeverRejected (0.05s)
 === RUN   TestKVModelHashIsStable
 --- PASS: TestKVModelHashIsStable (0.00s)
 === RUN   TestKVModelApplyIsPure
@@ -80,7 +82,7 @@ ok  	github.com/eigendash/graft/kv	1.165s
 === RUN   TestRegisterModelSemantics
 --- PASS: TestRegisterModelSemantics (0.00s)
 PASS
-ok  	github.com/eigendash/graft/lcheck	1.454s
+ok  	github.com/eigendash/graft/lcheck	1.344s
 === RUN   TestCommitRuleRefusesEarlierTermMajority
 --- PASS: TestCommitRuleRefusesEarlierTermMajority (0.00s)
 === RUN   TestFigure8OldTermEntryOnMajorityIsNotCommitted
@@ -102,7 +104,7 @@ ok  	github.com/eigendash/graft/lcheck	1.454s
 === RUN   TestBacktrackingCatchesUpLaggingFollower
 --- PASS: TestBacktrackingCatchesUpLaggingFollower (0.01s)
 === RUN   TestSnapshotInstallCatchesUpCompactedFollower
---- PASS: TestSnapshotInstallCatchesUpCompactedFollower (0.00s)
+--- PASS: TestSnapshotInstallCatchesUpCompactedFollower (0.01s)
 === RUN   TestAddVoterThenRemoveVoter
 --- PASS: TestAddVoterThenRemoveVoter (0.01s)
 === RUN   TestRemovingTheLeaderStepsItDown
@@ -122,7 +124,7 @@ ok  	github.com/eigendash/graft/lcheck	1.454s
 === RUN   TestSortedVotersDeduplicatesAndOrders
 --- PASS: TestSortedVotersDeduplicatesAndOrders (0.00s)
 === RUN   TestCoreHasNoClockAndNoIO
---- PASS: TestCoreHasNoClockAndNoIO (0.01s)
+--- PASS: TestCoreHasNoClockAndNoIO (0.02s)
 === RUN   TestInstallSnapshotSupersedesStaleSuffix
 --- PASS: TestInstallSnapshotSupersedesStaleSuffix (0.00s)
 === RUN   TestLocalCompactionKeepsTheSuffix
@@ -134,50 +136,50 @@ ok  	github.com/eigendash/graft/lcheck	1.454s
 === RUN   TestOutboundAppendEntriesDoesNotAliasTheLog
 --- PASS: TestOutboundAppendEntriesDoesNotAliasTheLog (0.00s)
 PASS
-ok  	github.com/eigendash/graft/raft	1.330s
+ok  	github.com/eigendash/graft/raft	1.978s
 === RUN   TestSingleNodeCommitsClientCommands
 --- PASS: TestSingleNodeCommitsClientCommands (0.00s)
 === RUN   TestClusterElectsExactlyOneLeaderPerTerm
 --- PASS: TestClusterElectsExactlyOneLeaderPerTerm (0.01s)
 === RUN   TestElectionLiveness
---- PASS: TestElectionLiveness (0.04s)
+--- PASS: TestElectionLiveness (0.08s)
 === RUN   TestDeterminism
---- PASS: TestDeterminism (0.11s)
+--- PASS: TestDeterminism (0.21s)
 === RUN   TestPartitionPrimitives
 --- PASS: TestPartitionPrimitives (0.00s)
 === RUN   TestCrashDiscardsVolatileState
---- PASS: TestCrashDiscardsVolatileState (0.00s)
+--- PASS: TestCrashDiscardsVolatileState (0.01s)
 === RUN   TestDelayedMessagesArriveLate
 --- PASS: TestDelayedMessagesArriveLate (0.00s)
 === RUN   TestRandomPartitionIsDeterministic
---- PASS: TestRandomPartitionIsDeterministic (0.02s)
+--- PASS: TestRandomPartitionIsDeterministic (0.03s)
 === RUN   TestRandomPartitionIsInstalledAndHealed
---- PASS: TestRandomPartitionIsInstalledAndHealed (0.01s)
+--- PASS: TestRandomPartitionIsInstalledAndHealed (0.02s)
 === RUN   TestModelCheckAcrossSeeds
-    verify_test.go:68: nodes=5 seeds=200 ticks=240000 committed=32804 elections=3385 crashes=2270 restarts=2242 partitions=3701 snapshots(created/installed)=908/2280 dropped=122755 duplicated=19296 reordered=52731
     verify_test.go:68: nodes=3 seeds=200 ticks=240000 committed=15789 elections=2748 crashes=1350 restarts=1334 partitions=3582 snapshots(created/installed)=536/1365 dropped=70629 duplicated=9431 reordered=25540
---- PASS: TestModelCheckAcrossSeeds (4.62s)
+    verify_test.go:68: nodes=5 seeds=200 ticks=240000 committed=32804 elections=3385 crashes=2270 restarts=2242 partitions=3701 snapshots(created/installed)=908/2280 dropped=122755 duplicated=19296 reordered=52731
+--- PASS: TestModelCheckAcrossSeeds (8.14s)
 === RUN   TestModelCheckHarshConfig
     verify_test.go:132: harsh: seeds=250 ticks=500000 committedDepthTotal=23190 clientOps=15000/15000 elections=8750 crashes=3747 restarts=3726 partitions=4845 snapshots(created/installed)=5570/4261
---- PASS: TestModelCheckHarshConfig (8.49s)
+--- PASS: TestModelCheckHarshConfig (11.29s)
 === RUN   TestRegressionSeed35LogMatching
     verify_test.go:205: seed 35 replay: ticks=2000 committedDepth=0 crashes=18 restarts=18 snapshots(created/installed)=0/0 timeout/roundtrip=0.21 (timing-marginal schedule; safety-only regression)
---- PASS: TestRegressionSeed35LogMatching (0.20s)
+--- PASS: TestRegressionSeed35LogMatching (0.17s)
 === RUN   TestHarshFaultRatesAreSurvivable
     verify_test.go:273: harsh rates, longer timeout: seeds=25 ticks=150000 committedDepthTotal=3027 clientOps=1875/1875 crashes=1456 partitions=4715 timeout/roundtrip=0.71
---- PASS: TestHarshFaultRatesAreSurvivable (2.27s)
+--- PASS: TestHarshFaultRatesAreSurvivable (2.26s)
 === RUN   TestSnapshotSupersedesStaleSuffixUnderCrash
---- PASS: TestSnapshotSupersedesStaleSuffixUnderCrash (0.05s)
+--- PASS: TestSnapshotSupersedesStaleSuffixUnderCrash (0.06s)
 === RUN   TestLinearizabilityUnderFaultInjection
     verify_test.go:380: linearizability: seeds=60 operations=1260 maxHistory=21 checkerSteps=1344 messages(dropped/duplicated/reordered)=9752/2309/6563 crashes=161
---- PASS: TestLinearizabilityUnderFaultInjection (0.54s)
+--- PASS: TestLinearizabilityUnderFaultInjection (0.70s)
 === RUN   TestSnapshotCatchUpAfterLongPartition
---- PASS: TestSnapshotCatchUpAfterLongPartition (0.04s)
+--- PASS: TestSnapshotCatchUpAfterLongPartition (0.06s)
 === RUN   TestSnapshotCatchUpViaQuiescence
---- PASS: TestSnapshotCatchUpViaQuiescence (0.03s)
+--- PASS: TestSnapshotCatchUpViaQuiescence (0.04s)
 === RUN   TestRunOnceReportsTicksAndStats
 --- PASS: TestRunOnceReportsTicksAndStats (0.00s)
 === RUN   TestSummarise
 --- PASS: TestSummarise (0.00s)
 PASS
-ok  	github.com/eigendash/graft/sim	17.994s
+ok  	github.com/eigendash/graft/sim	24.782s

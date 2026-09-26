@@ -1,53 +1,178 @@
-$ go test -run XXX -bench=. -benchtime=1s -count=1 ./...
+$ go test -run XXX -bench=. -benchtime=1s -count=5 ./...
+$ uptime: 22:50  up 47 days,  8:20, 2 users, load averages: 44.96 28.90 17.32
 ?   	github.com/eigendash/graft/cmd/graftbench	[no test files]
 PASS
-ok  	github.com/eigendash/graft/kv	0.161s
+ok  	github.com/eigendash/graft/kv	0.231s
 goos: darwin
 goarch: arm64
 pkg: github.com/eigendash/graft/lcheck
 cpu: Apple M4 Pro
-BenchmarkCheck/kv/ops=8-12   	  179671	      7153 ns/op	         8.000 search-steps
-BenchmarkCheck/kv/ops=16-12  	   72228	     17194 ns/op	        16.00 search-steps
-BenchmarkCheck/kv/ops=24-12  	   48651	     27563 ns/op	        24.00 search-steps
-BenchmarkCheck/kv/ops=32-12  	   30560	     38710 ns/op	        32.00 search-steps
-BenchmarkCheckRegister/register/ops=8-12         	  510006	      2284 ns/op
-BenchmarkCheckRegister/register/ops=16-12        	  216862	      6930 ns/op
-BenchmarkCheckRegister/register/ops=24-12        	  166104	      7204 ns/op
+BenchmarkCheck/kv/ops=8-12   	  139027	     11412 ns/op	         8.000 search-steps
+BenchmarkCheck/kv/ops=8-12   	  235750	      4909 ns/op	         8.000 search-steps
+BenchmarkCheck/kv/ops=8-12   	  224320	      6258 ns/op	         8.000 search-steps
+BenchmarkCheck/kv/ops=8-12   	  169000	      7521 ns/op	         8.000 search-steps
+BenchmarkCheck/kv/ops=8-12   	  156181	      7174 ns/op	         8.000 search-steps
+BenchmarkCheck/kv/ops=16-12  	   79398	     15593 ns/op	        16.00 search-steps
+BenchmarkCheck/kv/ops=16-12  	   79626	     15660 ns/op	        16.00 search-steps
+BenchmarkCheck/kv/ops=16-12  	   67515	     18186 ns/op	        16.00 search-steps
+BenchmarkCheck/kv/ops=16-12  	   84034	     15373 ns/op	        16.00 search-steps
+BenchmarkCheck/kv/ops=16-12  	   77263	     15572 ns/op	        16.00 search-steps
+BenchmarkCheck/kv/ops=24-12  	   43414	     26682 ns/op	        24.00 search-steps
+BenchmarkCheck/kv/ops=24-12  	   42004	     29781 ns/op	        24.00 search-steps
+BenchmarkCheck/kv/ops=24-12  	   43243	     27374 ns/op	        24.00 search-steps
+BenchmarkCheck/kv/ops=24-12  	   47119	     26706 ns/op	        24.00 search-steps
+BenchmarkCheck/kv/ops=24-12  	   48826	     24947 ns/op	        24.00 search-steps
+BenchmarkCheck/kv/ops=32-12  	   34119	     34903 ns/op	        32.00 search-steps
+BenchmarkCheck/kv/ops=32-12  	   34892	     32215 ns/op	        32.00 search-steps
+BenchmarkCheck/kv/ops=32-12  	   38557	     34767 ns/op	        32.00 search-steps
+BenchmarkCheck/kv/ops=32-12  	   34862	     35349 ns/op	        32.00 search-steps
+BenchmarkCheck/kv/ops=32-12  	   31740	     35903 ns/op	        32.00 search-steps
+BenchmarkCheckRegister/register/ops=8-12         	  598411	      1977 ns/op
+BenchmarkCheckRegister/register/ops=8-12         	  577182	      1910 ns/op
+BenchmarkCheckRegister/register/ops=8-12         	  598723	      2479 ns/op
+BenchmarkCheckRegister/register/ops=8-12         	  421790	      2671 ns/op
+BenchmarkCheckRegister/register/ops=8-12         	  464680	      3080 ns/op
+BenchmarkCheckRegister/register/ops=16-12        	  211327	      4981 ns/op
+BenchmarkCheckRegister/register/ops=16-12        	  210529	      6134 ns/op
+BenchmarkCheckRegister/register/ops=16-12        	  204156	      5695 ns/op
+BenchmarkCheckRegister/register/ops=16-12        	  233685	      5064 ns/op
+BenchmarkCheckRegister/register/ops=16-12        	  236194	      6429 ns/op
+BenchmarkCheckRegister/register/ops=24-12        	  107115	     12402 ns/op
+BenchmarkCheckRegister/register/ops=24-12        	   82976	     13593 ns/op
+BenchmarkCheckRegister/register/ops=24-12        	   99788	     10720 ns/op
+BenchmarkCheckRegister/register/ops=24-12        	  118533	     10574 ns/op
+BenchmarkCheckRegister/register/ops=24-12        	  113800	     10543 ns/op
 PASS
-ok  	github.com/eigendash/graft/lcheck	10.137s
+ok  	github.com/eigendash/graft/lcheck	52.483s
 goos: darwin
 goarch: arm64
 pkg: github.com/eigendash/graft/raft
 cpu: Apple M4 Pro
-BenchmarkStepAppendEntries/batch=1-12         	20445512	        64.66 ns/op	 108.26 MB/s
-BenchmarkStepAppendEntries/batch=16-12        	11683560	        99.96 ns/op	1120.42 MB/s
-BenchmarkStepAppendEntries/batch=64-12        	 5129302	       236.0 ns/op	1898.14 MB/s
-BenchmarkProposeOnLeader-12                   	  455350	      2526 ns/op
-BenchmarkTruncateAndAppend-12                 	77453084	        16.35 ns/op
+BenchmarkStepAppendEntries/batch=1-12         	12534054	        98.11 ns/op	  71.35 MB/s
+BenchmarkStepAppendEntries/batch=1-12         	11687784	        98.86 ns/op	  70.81 MB/s
+BenchmarkStepAppendEntries/batch=1-12         	12710287	       105.3 ns/op	  66.51 MB/s
+BenchmarkStepAppendEntries/batch=1-12         	 9976941	       111.0 ns/op	  63.07 MB/s
+BenchmarkStepAppendEntries/batch=1-12         	 7980757	       129.5 ns/op	  54.07 MB/s
+BenchmarkStepAppendEntries/batch=16-12        	 6358393	       168.0 ns/op	 666.57 MB/s
+BenchmarkStepAppendEntries/batch=16-12        	 6655579	       190.6 ns/op	 587.51 MB/s
+BenchmarkStepAppendEntries/batch=16-12        	 6442921	       189.3 ns/op	 591.60 MB/s
+BenchmarkStepAppendEntries/batch=16-12        	 6734013	       222.6 ns/op	 503.16 MB/s
+BenchmarkStepAppendEntries/batch=16-12        	 5057619	       212.9 ns/op	 525.99 MB/s
+BenchmarkStepAppendEntries/batch=64-12        	 2744397	       406.3 ns/op	1102.72 MB/s
+BenchmarkStepAppendEntries/batch=64-12        	 2791231	       490.2 ns/op	 913.99 MB/s
+BenchmarkStepAppendEntries/batch=64-12        	 2099958	       508.3 ns/op	 881.43 MB/s
+BenchmarkStepAppendEntries/batch=64-12        	 2332563	       481.9 ns/op	 929.73 MB/s
+BenchmarkStepAppendEntries/batch=64-12        	 2071300	       624.1 ns/op	 717.86 MB/s
+BenchmarkProposeOnLeader-12                   	  180148	      6289 ns/op
+BenchmarkProposeOnLeader-12                   	  225030	      5400 ns/op
+BenchmarkProposeOnLeader-12                   	  265860	      4610 ns/op
+BenchmarkProposeOnLeader-12                   	  190791	      6645 ns/op
+BenchmarkProposeOnLeader-12                   	  241362	      4739 ns/op
+BenchmarkTruncateAndAppend-12                 	36455002	        39.28 ns/op
+BenchmarkTruncateAndAppend-12                 	29019912	        46.94 ns/op
+BenchmarkTruncateAndAppend-12                 	26801617	        53.34 ns/op
+BenchmarkTruncateAndAppend-12                 	27941605	        50.72 ns/op
+BenchmarkTruncateAndAppend-12                 	32163066	        33.75 ns/op
 PASS
-ok  	github.com/eigendash/graft/raft	6.745s
+ok  	github.com/eigendash/graft/raft	39.444s
 goos: darwin
 goarch: arm64
 pkg: github.com/eigendash/graft/sim
 cpu: Apple M4 Pro
-BenchmarkTick/nodes=3/idle-12       	 1950332	       635.9 ns/op
-BenchmarkTick/nodes=3/with-log-12   	  472893	      2332 ns/op
-BenchmarkTick/nodes=5/idle-12       	  928795	      1628 ns/op
-BenchmarkTick/nodes=5/with-log-12   	  260163	      4980 ns/op
-BenchmarkTick/nodes=7/idle-12       	  415156	      2752 ns/op
-BenchmarkTick/nodes=7/with-log-12   	  189374	      5789 ns/op
-BenchmarkKVOperation/nodes=3/hop=1ms-12         	  261210	      3874 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
-BenchmarkKVOperation/nodes=3/hop=10ms-12        	  246690	      4495 ns/op	        20.00 median-latency-ms	       571.4 ops/virtual-s	        20.00 p99-latency-ms
-BenchmarkKVOperation/nodes=3/hop=50ms-12        	  173856	      6719 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
-BenchmarkKVOperation/nodes=5/hop=1ms-12         	  159836	      6614 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
-BenchmarkKVOperation/nodes=5/hop=10ms-12        	  139851	      7430 ns/op	        20.00 median-latency-ms	       571.4 ops/virtual-s	        20.00 p99-latency-ms
-BenchmarkKVOperation/nodes=5/hop=50ms-12        	  108637	     10345 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
-BenchmarkKVOperation/nodes=7/hop=1ms-12         	  112339	     10050 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
-BenchmarkKVOperation/nodes=7/hop=10ms-12        	   89943	     11961 ns/op	        20.00 median-latency-ms	       571.4 ops/virtual-s	        20.00 p99-latency-ms
-BenchmarkKVOperation/nodes=7/hop=50ms-12        	   66517	     17063 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
-BenchmarkSafetySweep-12                         	     585	   1853323 ns/op
-BenchmarkLinearizabilityCheck/ops=8-12          	  395250	      3035 ns/op
-BenchmarkLinearizabilityCheck/ops=16-12         	  144603	      8578 ns/op
-BenchmarkLinearizabilityCheck/ops=24-12         	   71302	     16338 ns/op
+BenchmarkTick/nodes=3/idle-12       	 1000000	      1189 ns/op
+BenchmarkTick/nodes=3/idle-12       	 1000000	      1145 ns/op
+BenchmarkTick/nodes=3/idle-12       	 1000000	      1127 ns/op
+BenchmarkTick/nodes=3/idle-12       	 1000000	      1058 ns/op
+BenchmarkTick/nodes=3/idle-12       	 1000000	      1034 ns/op
+BenchmarkTick/nodes=3/with-log-12   	  271632	      3855 ns/op
+BenchmarkTick/nodes=3/with-log-12   	  312576	      3869 ns/op
+BenchmarkTick/nodes=3/with-log-12   	  260607	      3855 ns/op
+BenchmarkTick/nodes=3/with-log-12   	  243804	      4332 ns/op
+BenchmarkTick/nodes=3/with-log-12   	  273426	      4762 ns/op
+BenchmarkTick/nodes=5/idle-12       	  501030	      2485 ns/op
+BenchmarkTick/nodes=5/idle-12       	  480068	      2674 ns/op
+BenchmarkTick/nodes=5/idle-12       	  521258	      2262 ns/op
+BenchmarkTick/nodes=5/idle-12       	  519892	      2304 ns/op
+BenchmarkTick/nodes=5/idle-12       	  479258	      2331 ns/op
+BenchmarkTick/nodes=5/with-log-12   	  157698	      7977 ns/op
+BenchmarkTick/nodes=5/with-log-12   	  160680	      7423 ns/op
+BenchmarkTick/nodes=5/with-log-12   	  172920	      8238 ns/op
+BenchmarkTick/nodes=5/with-log-12   	  141976	      7138 ns/op
+BenchmarkTick/nodes=5/with-log-12   	  192925	      5624 ns/op
+BenchmarkTick/nodes=7/idle-12       	  405202	      2899 ns/op
+BenchmarkTick/nodes=7/idle-12       	  407302	      2897 ns/op
+BenchmarkTick/nodes=7/idle-12       	  453496	      2815 ns/op
+BenchmarkTick/nodes=7/idle-12       	  445222	      2897 ns/op
+BenchmarkTick/nodes=7/idle-12       	  372800	      2897 ns/op
+BenchmarkTick/nodes=7/with-log-12   	  169676	      6599 ns/op
+BenchmarkTick/nodes=7/with-log-12   	  196178	      5758 ns/op
+BenchmarkTick/nodes=7/with-log-12   	  203342	      5422 ns/op
+BenchmarkTick/nodes=7/with-log-12   	  212271	      5491 ns/op
+BenchmarkTick/nodes=7/with-log-12   	  202964	      5746 ns/op
+BenchmarkKVOperation/nodes=3/hop=1ms-12         	  274844	      4164 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=3/hop=1ms-12         	  253284	      4142 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=3/hop=1ms-12         	  255218	      4753 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=3/hop=1ms-12         	  199544	      5101 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=3/hop=1ms-12         	  208929	      4824 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=3/hop=10ms-12        	  169262	      6347 ns/op	        20.00 median-latency-ms	       571.4 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=3/hop=10ms-12        	  163687	      6474 ns/op	        20.00 median-latency-ms	       571.4 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=3/hop=10ms-12        	  165691	      6220 ns/op	        20.00 median-latency-ms	       571.4 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=3/hop=10ms-12        	  198531	      5520 ns/op	        20.00 median-latency-ms	       571.4 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=3/hop=10ms-12        	  200410	      5534 ns/op	        20.00 median-latency-ms	       571.4 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=3/hop=50ms-12        	  132732	      8620 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkKVOperation/nodes=3/hop=50ms-12        	  125480	      9980 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkKVOperation/nodes=3/hop=50ms-12        	  113623	      9609 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkKVOperation/nodes=3/hop=50ms-12        	  132835	      7816 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkKVOperation/nodes=3/hop=50ms-12        	  146870	      8359 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=1ms-12         	  128876	      9398 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=1ms-12         	  119084	      8416 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=1ms-12         	  132542	      8663 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=1ms-12         	  116126	     11325 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=1ms-12         	   86313	     12035 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=10ms-12        	   68109	     15242 ns/op	        20.00 median-latency-ms	       571.3 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=10ms-12        	   81556	     14384 ns/op	        20.00 median-latency-ms	       571.4 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=10ms-12        	   98650	     10272 ns/op	        20.00 median-latency-ms	       571.4 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=10ms-12        	  112466	      9913 ns/op	        20.00 median-latency-ms	       571.4 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=10ms-12        	   82632	     13346 ns/op	        20.00 median-latency-ms	       571.4 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=50ms-12        	   58454	     19792 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=50ms-12        	   55629	     20861 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=50ms-12        	   43112	     25355 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=50ms-12        	   57429	     17418 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkKVOperation/nodes=5/hop=50ms-12        	   62079	     16684 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=1ms-12         	   72039	     17358 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=1ms-12         	   69494	     16023 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=1ms-12         	   73482	     14856 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=1ms-12         	   71431	     17173 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=1ms-12         	   44121	     22665 ns/op	         2.000 median-latency-ms	      4000 ops/virtual-s	         2.000 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=10ms-12        	   52076	     20985 ns/op	        20.00 median-latency-ms	       571.3 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=10ms-12        	   67998	     17153 ns/op	        20.00 median-latency-ms	       571.3 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=10ms-12        	   50954	     20632 ns/op	        20.00 median-latency-ms	       571.3 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=10ms-12        	   59394	     19585 ns/op	        20.00 median-latency-ms	       571.3 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=10ms-12        	   64204	     19091 ns/op	        20.00 median-latency-ms	       571.3 ops/virtual-s	        20.00 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=50ms-12        	   39272	     29512 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=50ms-12        	   30374	     37401 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=50ms-12        	   30645	     37057 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=50ms-12        	   37783	     30934 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkKVOperation/nodes=7/hop=50ms-12        	   41097	     28363 ns/op	       100.0 median-latency-ms	       118.8 ops/virtual-s	       100.0 p99-latency-ms
+BenchmarkSafetySweep-12                         	     322	   3837808 ns/op
+BenchmarkSafetySweep-12                         	     312	   4603650 ns/op
+BenchmarkSafetySweep-12                         	     296	   5031071 ns/op
+BenchmarkSafetySweep-12                         	     318	   3348642 ns/op
+BenchmarkSafetySweep-12                         	     362	   3706538 ns/op
+BenchmarkLinearizabilityCheck/ops=8-12          	  176660	      7816 ns/op
+BenchmarkLinearizabilityCheck/ops=8-12          	  200128	      6823 ns/op
+BenchmarkLinearizabilityCheck/ops=8-12          	  212780	      6284 ns/op
+BenchmarkLinearizabilityCheck/ops=8-12          	  228974	      6171 ns/op
+BenchmarkLinearizabilityCheck/ops=8-12          	  202856	      7135 ns/op
+BenchmarkLinearizabilityCheck/ops=16-12         	   75963	     17742 ns/op
+BenchmarkLinearizabilityCheck/ops=16-12         	   71947	     18736 ns/op
+BenchmarkLinearizabilityCheck/ops=16-12         	   84446	     19682 ns/op
+BenchmarkLinearizabilityCheck/ops=16-12         	   46378	     22354 ns/op
+BenchmarkLinearizabilityCheck/ops=16-12         	   63741	     22543 ns/op
+BenchmarkLinearizabilityCheck/ops=24-12         	   33439	     34302 ns/op
+BenchmarkLinearizabilityCheck/ops=24-12         	   30873	     58554 ns/op
+BenchmarkLinearizabilityCheck/ops=24-12         	   31741	     43443 ns/op
+BenchmarkLinearizabilityCheck/ops=24-12         	   31311	     40650 ns/op
+BenchmarkLinearizabilityCheck/ops=24-12         	   32367	     36963 ns/op
 PASS
-ok  	github.com/eigendash/graft/sim	25.730s
+ok  	github.com/eigendash/graft/sim	143.671s
